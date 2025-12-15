@@ -88,6 +88,7 @@
         # --- 遊戲核心邏輯 ---
 
         def move_target():
+         global is_gold
             """移動目標元素"""
             if not game_active:
                 return
@@ -98,6 +99,13 @@
 
             new_x = random.randint(0, max(0, max_x))
             new_y = random.randint(min_y, max(min_y, max_y))
+         # 20% 機率金幣目標
+    if random.random() < 0.2:#41423224
+        is_gold = True
+        target.style.backgroundColor = "#ff0000"  # 金黃色
+    else:
+        is_gold = False
+        target.style.backgroundColor = f"rgb({random.randint(0,255)},{random.randint(0,255)},{random.randint(0,255)})"
             
             target.style.backgroundColor = f"rgb({random.randint(0, 255)}, {random.randint(0, 255)}, {random.randint(0, 255)})"
             
