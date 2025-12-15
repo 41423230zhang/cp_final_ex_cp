@@ -104,17 +104,41 @@
             target.style.left = f"{new_x}px"
             target.style.top = f"{new_y}px"
 
-        @target.bind("click")
-        def hit_target(event):
-            """點擊目標時觸發 (已經是「點擊圓圈內」的檢測)"""
-            global score
-            if not game_active:
-                return
+         if is_gold:
+        score += 3
+    else:
+        score += 1
 
-            score += 1
-            score_display.text = f"分數: {score}"
-            move_target()
-            event.stopPropagation() 
+    combo += 1
+    miss_count = 0
+
+    score_display.text = f"分數: {score}（連擊 {combo}）"
+
+    # 連擊 → 目標變小
+    current_size = int(target.style.width.replace("px", ""))
+    new_size = current_size - 5
+    new_size = max(20, new_size)
+    target.style.width = f"{new_size}px"
+    target.style.height = f"{new_size}px"
+
+    move_target()
+    event.stopPropagation()
+
+@game_area.bind("click")
+def miss_click(event):
+    global miss_count, combo
+    if not game_active:
+        return
+
+    miss_count += 1
+    combo = 0
+
+    # miss → 目標變大
+    current_size = int(target.style.width.replace("px", ""))
+    new_size = current_size + 5
+    new_size = min(150, new_size)
+    target.style.width = f"{new_size}px"
+    target.style.height = f"{new_size}px"
 
         def submit_score_to_server(final_score):
             """使用 Brython 的 ajax 模組提交分數到 Flask 後端"""
