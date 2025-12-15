@@ -157,7 +157,53 @@ def miss_click(event):
     # 加分
     score += combo
     score_display.text = f"分數: {score} (Combo x{combo})"
-            
+
+    #滑鼠
+    # 新增滑鼠軌跡效果
+TRAIL_SIZE = 10
+TRAIL_LIFETIME = 300  # 軌跡持續時間
+
+@game_area.bind("mousemove")
+def mouse_trail(event):
+    if not game_active:
+        return
+
+    dot = document.createElement("div")
+
+    dot.style.width = f"{TRAIL_SIZE}px"
+    dot.style.height = f"{TRAIL_SIZE}px"
+    dot.style.borderRadius = "50%"
+    dot.style.position = "absolute"
+
+    #正確計算滑鼠在 game_area 內的位置
+    rect = game_area.getBoundingClientRect()
+    x = event.clientX - rect.left
+    y = event.clientY - rect.top
+
+    dot.style.left = f"{x - TRAIL_SIZE//2}px"
+    dot.style.top = f"{y - TRAIL_SIZE//2}px"
+
+    alpha = min(0.2 + combo * 0.05, 0.8)
+    dot.style.backgroundColor = f"rgba(255, 200, 0, {alpha})"
+
+    dot.style.pointerEvents = "none"
+    dot.style.transition = "opacity 0.3s"
+
+    game_area <= dot
+
+    def fade():
+        dot.style.opacity = "0"
+    timer.set_timeout(fade, 50)
+
+    def remove():
+        dot.remove()
+    timer.set_timeout(remove, TRAIL_LIFETIME)
+
+
+    #滑鼠
+
+
+        
            def hit_target(event):
     global score
     if not game_active:
