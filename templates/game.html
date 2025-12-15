@@ -158,22 +158,25 @@ def miss_click(event):
     score += combo
     score_display.text = f"分數: {score} (Combo x{combo})"
             
-            req = ajax.ajax()
-            req.bind('complete', on_complete)
-            
-            # **將 Jinja2 語法放在 raw 塊外，再繼續 raw 塊**
-            # 必須使用 {% endraw %}{% raw %} 分割，才能呼叫 url_for
-            {% endraw %}
-            req.open('POST', '{{ url_for("submit_score") }}', True) 
-            {% raw %}
-            
-            req.set_header('Content-Type', 'application/json')
-            
-            # 關鍵修正：使用 Brython 內建的 JSON 序列化功能，最安全！
-            data = {'score': final_score}
-            json_payload = window.JSON.stringify(data)
-            
-            req.send(json_payload)
+           def hit_target(event):
+    global score
+    if not game_active:
+        return
+
+    score += 1
+    score_display.text = f"分數: {score}"
+
+    # 球消失
+    target.style.opacity = "0"
+
+    # 0.3 秒後移動並淡入
+    def respawn():
+        move_target()
+        target.style.opacity = "1"
+
+    timer.set_timeout(respawn, 300)
+
+    event.stopPropagation()
 
         def restart_game(event):
             # ... (重新開始邏輯不變)
