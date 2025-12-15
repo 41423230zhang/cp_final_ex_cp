@@ -140,19 +140,23 @@ def miss_click(event):
     target.style.width = f"{new_size}px"
     target.style.height = f"{new_size}px"
 
-        def submit_score_to_server(final_score):
-            """使用 Brython 的 ajax 模組提交分數到 Flask 後端"""
-            def on_complete(req):
-                if req.status == 200:
-                    window.alert("分數成功上傳至英雄榜！")
-                else:
-                    # 顯示後端返回的錯誤訊息
-                    try:
-                        resp = window.JSON.parse(req.text)
-                        msg = resp.message
-                    except:
-                        msg = "請檢查登入狀態或伺服器狀態，或確保您已登入。"
-                    window.alert(f"分數上傳失敗 ({req.status})！{msg}")
+        def hit_target(event):
+    global score, combo, last_hit_time
+    if not game_active:
+        return
+
+    now = time.time()
+
+    # Combo 判斷
+    if now - last_hit_time < 0.8:
+        combo += 1
+    else:
+        combo = 1
+    last_hit_time = now
+
+    # 加分
+    score += combo
+    score_display.text = f"分數: {score} (Combo x{combo})"
             
             req = ajax.ajax()
             req.bind('complete', on_complete)
